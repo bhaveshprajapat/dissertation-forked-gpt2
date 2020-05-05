@@ -39,7 +39,6 @@ parser.add_argument('--model_name', metavar='MODEL', type=str, default='117M', h
 parser.add_argument('--combine', metavar='CHARS', type=int, default=50000, help='Concatenate input files with <|endoftext|> separator into chunks of this minimum size')
 
 parser.add_argument('--batch_size', metavar='SIZE', type=int, default=1, help='Batch size')
-parser.add_argument('--steps', metavar='STEPS', type=int, default=-1, help='Steps')
 parser.add_argument('--learning_rate', metavar='LR', type=float, default=0.00002, help='Learning rate for Adam')
 parser.add_argument('--learning_rate_min', type=float, default=0.00001, help='Minimum learning rate')
 parser.add_argument('--learning_rate_cos', default=False, action='store_true', help='Use learn rate cosine annealing')
@@ -467,9 +466,6 @@ def main():
         while True:
             try:
                 now = elapsed()
-				if counter >= args.steps:
-					save()
-					return
                 if args.save_time > 0 and (((now - last_saved_time) / 60.0) >= args.save_time):
                     save()
                     last_saved_time = now
