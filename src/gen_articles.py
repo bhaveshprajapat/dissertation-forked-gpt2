@@ -81,35 +81,27 @@ def interact_model(
           restore_from = os.path.join('models', model_name)
         ckpt = tflex.latest_checkpoint(restore_from)
         saver.restore(sess, ckpt)
-
-        while True:
-            if prompt is not None:
-              if os.path.isfile(prompt):
-                  with open(prompt) as f:
-                      raw_text = f.read()
-              else:
-                  raw_text = prompt
-            else:
-                raw_text = input("Model prompt >>> ")
-                if not raw_text:
-                    raw_text="\n"
-            if len(raw_text) > 1 and raw_text.endswith('\n'):
-                raw_text = raw_text[:-1]
-            print('Prompt:', repr(raw_text))
-            context_tokens = enc.encode(raw_text)
-            generated = 0
-            for _ in range(nsamples // batch_size):
-                out = sess.run(output, feed_dict={
-                    context: [context_tokens for _ in range(batch_size)]
-                })[:, len(context_tokens):]
-                for i in range(batch_size):
-                    generated += 1
-                    text = enc.decode(out[i])
-                    print("=" * 40 + " SAMPLE " + str(generated) + " " + "=" * 40)
-                    sys.stdout.write(raw_text)
-                    print(text)
-                    sys.stdout.flush()
-            print("=" * 80)
+        import csv
+        import re
+        os.mkdir("qsamples")
+        with open("cleaned-satire-titles-100.csv") as titles_file:
+            titles = csv.reader(titles_file, delimiter=',')
+            for title in titles:
+                raw_text = title
+                if len(raw_text) > 1 and raw_text.endswith('\n'):
+                    raw_text = raw_text[:-1]
+                print('Prompt:' + raw_text)
+                context_tokens = enc.encode(raw_text)
+                for _ in range(nsamples // batch_size):
+                    out = sess.run(output, feed_dict={
+                        context: [context_tokens for _ in range(batch_size)]
+                    })[:, len(context_tokens):]
+                    for i in range(batch_size):
+                        text = enc.decode(out[i])
+                        f = open("qsamples/"+re.sub('[^a-zA-Z]+', '', raw_text)+".txt", "a")
+                        f.write(text)
+                        f.close()
+                        sys.stdout.flush()
 
 if __name__ == '__main__':
     fire.Fire(interact_model)
