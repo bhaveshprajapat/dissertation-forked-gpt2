@@ -2,6 +2,7 @@
 
 import os
 import sys
+
 sys.path += [os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src')]
 sys.path += [os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))]
 
@@ -14,19 +15,19 @@ import tflex
 
 import model, sample, encoder
 
+
 def interact_model(
-    model_name='117M',
-    restore_from=None,
-    seed=None,
-    nsamples=1,
-    batch_size=1,
-    length=None,
-    temperature=1,
-    top_k=0,
-    top_p=0.0,
-    penalize=0,
-    prompt=None,
-    checkpoint_dir='checkpoint'
+        model_name='117M',
+        restore_from=None,
+        seed=None,
+        nsamples=1,
+        batch_size=1,
+        length=None,
+        temperature=1,
+        top_k=0,
+        top_p=0.0,
+        penalize=0,
+        to_dir="qsamples"
 ):
     """
     Interactively run the model
@@ -78,12 +79,13 @@ def interact_model(
 
         saver = tflex.Saver()
         if restore_from is None:
-          restore_from = os.path.join('models', model_name)
+            restore_from = os.path.join('models', model_name)
         ckpt = tflex.latest_checkpoint(restore_from)
         saver.restore(sess, ckpt)
         import csv
         import re
-        os.mkdir("qsamples")
+        if not os.path.exists(to_dir):
+            os.mkdir(to_dir)
         with open("cleaned-satire-titles-100.csv") as titles_file:
             titles = csv.reader(titles_file, delimiter=',')
             for title in titles:
@@ -98,10 +100,11 @@ def interact_model(
                     })[:, len(context_tokens):]
                     for i in range(batch_size):
                         text = enc.decode(out[i])
-                        f = open("qsamples/"+re.sub('[^a-zA-Z]+', '', raw_text)+".txt", "a")
+                        f = open(to_dir + re.sub('[^a-zA-Z]+', '', raw_text) + ".txt", "a")
                         f.write(text)
                         f.close()
                         sys.stdout.flush()
+
 
 if __name__ == '__main__':
     fire.Fire(interact_model)
