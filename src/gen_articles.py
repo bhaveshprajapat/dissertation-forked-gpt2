@@ -89,7 +89,7 @@ def interact_model(
         with open("cleaned-satire-titles-100.csv") as titles_file:
             titles = csv.reader(titles_file, delimiter=',')
             for title in titles:
-                raw_text = title
+                raw_text = title[0]
                 if len(raw_text) > 1 and raw_text.endswith('\n'):
                     raw_text = raw_text[:-1]
                 print('Prompt:' + raw_text)
