@@ -86,7 +86,7 @@ def interact_model(
         import re
         if not os.path.exists(to_dir):
             os.mkdir(to_dir)
-        with open("cleaned-satire-titles-100.csv") as titles_file:
+        with open("cleaned-satire-titles-100.csv", encoding='utf-8') as titles_file:
             titles = csv.reader(titles_file, delimiter=',')
             for title in titles:
                 raw_text = title[0]
