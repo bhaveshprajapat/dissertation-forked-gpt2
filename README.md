@@ -1,3 +1,19 @@
+# Dissertation Forked GPT-2 Code (model generation with TPUs)
+
+## Description
+This repo holds a forked version of the official GPT-2 code published as described below this note. 
+
+## Changes
+There are a few modifications to the sample generation code under `src`, in order generate portable samples for classification purposes.
+
+## Added files
+The added files are:
+* pre-encoded `DatasetA.npz` file
+* `src/cleaned-satire-titles-100.csv` which contains satire prefixes for conditional sample generation
+* src/gen_articles.py for automated generation of samples against the `cleaned-satire-titles-100.csv`
+
+
+---
 # gpt-2
 
 Code from the paper ["Language Models are Unsupervised Multitask Learners"](https://d4mucfpksywv.cloudfront.net/better-language-models/language-models.pdf).
